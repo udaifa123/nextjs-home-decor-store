@@ -102,32 +102,33 @@ export default function OrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [trackingModal, setTrackingModal] = useState(false);
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const res = await fetch("/api/orders");
-        const data = await res.json();
+useEffect(() => {
+  const fetchOrders = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user") || "null");
 
-        console.log("Orders:", data);
+      if (!user) return;
 
-        // Add status to orders if not present
-        const ordersWithStatus = (Array.isArray(data) ? data : []).map((order: Order) => ({
-          ...order,
-          status: order.status || getRandomStatus(),
-          tracking: order.tracking || generateTracking()
-        }));
+      const res = await fetch(`/api/orders?userId=${user.email}`);
+      const data = await res.json();
 
-        setOrders(ordersWithStatus);
-      } catch (err) {
-        console.log(err);
-        setOrders([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const ordersWithStatus = (Array.isArray(data) ? data : []).map((order: Order) => ({
+        ...order,
+        status: order.status || getRandomStatus(),
+        tracking: order.tracking || generateTracking()
+      }));
 
-    fetchOrders();
-  }, []);
+      setOrders(ordersWithStatus);
+    } catch (err) {
+      console.log(err);
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchOrders();
+}, []);
 
   // Handle reorder
   const handleReorder = (order: Order) => {

@@ -29,9 +29,11 @@ export async function POST(req: Request) {
     return NextResponse.json(user);
 
   } catch (error) {
-    return NextResponse.json(
-      { message: "Register error" },
-      { status: 500 }
-    );
-  }
+  console.log(error); 
+  
+  return NextResponse.json(
+    { message: "Register error" },
+    { status: 500 }
+  );
+}
 }

@@ -2,10 +2,12 @@ import mongoose, { Schema } from "mongoose";
 
 
 const OrderSchema = new Schema(
-  {
-    name: String,
-    address: String,
-    phone: String,
+{
+  userId: String,  
+  name: String,
+  address: String,
+  phone: String,
+    
 
     items: [
       {

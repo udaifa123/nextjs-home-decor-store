@@ -12,6 +12,7 @@ import {
   CheckCircle
 } from "lucide-react";
 
+
 type CartItem = {
   _id: string;
   title: string;
@@ -68,7 +69,19 @@ const handleOrder = async () => {
     return;
   }
 
+
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+
+
+  if (!user) {
+    alert("Please login first ❌");
+    return;
+  }
+
+
   const newOrder = {
+    userId: user.email,   // 👈 ADD THIS
+
     name,
     address,
     phone,
@@ -77,18 +90,20 @@ const handleOrder = async () => {
     date: new Date().toLocaleString(),
   };
 
-  // ✅ SAVE TO DATABASE (IMPORTANT FIX)
+
   await fetch("/api/orders", {
     method: "POST",
+
     headers: {
       "Content-Type": "application/json",
     },
+
     body: JSON.stringify(newOrder),
   });
 
-  // ✅ clear cart
-  const user = JSON.parse(localStorage.getItem("user") || "null");
+
   localStorage.removeItem(`cart_${user.email}`);
+
 
   router.push("/cart/success");
 };
