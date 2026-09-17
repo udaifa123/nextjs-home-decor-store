@@ -20,21 +20,31 @@ export default function Products() {
   const [loading, setLoading] = useState(true);
 
   // ✅ Fetch products
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch("/api/products");
-        const data = await res.json();
-        setProducts(data);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+ useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch("/api/products");
 
-    fetchProducts();
-  }, []);
+      const data = await res.json();
+
+      // ✅ IMPORTANT FIX
+      if (Array.isArray(data)) {
+        setProducts(data);
+      } else {
+        console.error("Invalid data:", data);
+        setProducts([]);
+      }
+
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setProducts([]); // safety
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProducts();
+}, []);
 
   // ✅ Compute filtered + sorted data (NO setState)
   const filtered = products
